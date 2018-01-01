@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">THPT Anh Hùng Núp</string>
+	<string name="app_name_activity1">Dự án hệ thống điện tự động</string>
+	<string name="app_name_activity2">Nạp chương trình cho hệ thống</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="work_hint">Nhập vào lịch trình</string>
+	<string name="hour_edit">Giờ</string>
+	<string name="minute_edit">Phút</string>
+	<string name="button_content">Thêm</string>
+    <string name="action_settings">Cài Đặt</string>
+    <string name="title_activity_led_control">Trình đơn điều khiển</string>
+</resources>

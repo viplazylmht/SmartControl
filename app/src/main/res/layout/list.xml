@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:layout_width="match_parent"
+	android:orientation="vertical">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		android:orientation="horizontal">
+
+		<CheckBox
+			android:id="@+id/check_work"
+			android:layout_width="50dp"
+			android:layout_height="match_parent"
+			android:text=""
+			android:paddingTop="45px"
+			android:paddingRight="10px"
+			android:layout_marginLeft="20dp"
+			android:gravity="center"
+			android:layout_gravity="center|center_vertical"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/work_content"
+				android:textSize="32px"
+				android:layout_width="match_parent"
+				android:lines="1"
+				android:textColor="@color/work_color"
+				android:layout_height="30dp"/>
+
+			<LinearLayout
+				android:layout_height="match_parent"
+				android:layout_width="match_parent"
+				android:orientation="horizontal">
+
+				<LinearLayout
+					android:layout_height="match_parent"
+					android:layout_width="wrap_content"
+					android:orientation="horizontal"
+					android:layout_weight="1.0">
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="wrap_content"
+						android:text="Gio:"/>
+
+					<TextView
+						android:id="@+id/timeh_content"
+						android:textSize="25px"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:lines="1"
+						android:textColor="@color/time_color"
+						android:layout_marginLeft="10dp"/>
+
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_height="match_parent"
+					android:layout_width="wrap_content"
+					android:orientation="horizontal"
+					android:layout_weight="1.0">
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="wrap_content"
+						android:text="Phut:"/>
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="match_parent"
+						android:id="@+id/timem_content"
+						android:layout_marginLeft="10dp"/>
+
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_height="match_parent"
+					android:layout_width="wrap_content"
+					android:orientation="horizontal"
+					android:layout_weight="1.0">
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="wrap_content"
+						android:text="thoigian delay:"/>
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="match_parent"
+						android:paddingLeft="10dp"
+						android:id="@+id/delay_content"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+	<View
+		android:background="?android:attr/dividerVertical"
+		android:layout_height="2dp"
+		android:layout_width="match_parent"/>
+
+</LinearLayout>
+
