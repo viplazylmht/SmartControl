@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Exam 3 - List View</string>
+	<string name="work_hint">Nhập vào lịch trình</string>
+	<string name="hour_edit">Giờ</string>
+	<string name="minute_edit">Phút</string>
+	<string name="button_content">Lưu</string>
+</resources>
