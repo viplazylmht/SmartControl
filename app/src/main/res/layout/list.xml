@@ -37,27 +37,32 @@
 			<LinearLayout
 				android:layout_height="match_parent"
 				android:layout_width="match_parent"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:paddingLeft="10dp">
 
 				<LinearLayout
 					android:layout_height="match_parent"
 					android:layout_width="wrap_content"
 					android:orientation="horizontal"
 					android:layout_weight="1.0">
-
 					<TextView
 						android:layout_height="match_parent"
 						android:layout_width="wrap_content"
-						android:text="Gio:"/>
-
+						android:text="Lúc "
+						android:paddingLeft="5dp"/>
 					<TextView
 						android:id="@+id/timeh_content"
 						android:textSize="25px"
-						android:layout_width="match_parent"
+						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
 						android:lines="1"
-						android:textColor="@color/time_color"
-						android:layout_marginLeft="10dp"/>
+						android:textColor="@color/time_color"/>
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="wrap_content"
+						android:text="Giờ"
+						android:paddingLeft="5dp"/>
 
 				</LinearLayout>
 
@@ -70,13 +75,15 @@
 					<TextView
 						android:layout_height="match_parent"
 						android:layout_width="wrap_content"
-						android:text="Phut:"/>
-
-					<TextView
-						android:layout_height="match_parent"
-						android:layout_width="match_parent"
 						android:id="@+id/timem_content"
-						android:layout_marginLeft="10dp"/>
+						android:paddingLeft="6dp"
+						android:textColor="@color/time_color"/>
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="wrap_content"
+						android:text="Phút"
+						android:paddingLeft="5dp"/>
 
 				</LinearLayout>
 
@@ -89,13 +96,20 @@
 					<TextView
 						android:layout_height="match_parent"
 						android:layout_width="wrap_content"
-						android:text="thoigian delay:"/>
+						android:text="trong"/>
 
 					<TextView
 						android:layout_height="match_parent"
-						android:layout_width="match_parent"
+						android:layout_width="wrap_content"
 						android:paddingLeft="10dp"
-						android:id="@+id/delay_content"/>
+						android:id="@+id/delay_content"
+						android:textColor="@color/time_color"/>
+
+					<TextView
+						android:layout_height="match_parent"
+						android:layout_width="wrap_content"
+						android:text="phút."
+						android:paddingLeft="7dp"/>
 
 				</LinearLayout>
 

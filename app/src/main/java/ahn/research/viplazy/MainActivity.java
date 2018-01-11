@@ -26,7 +26,7 @@ public class MainActivity extends Activity
             // Get the device MAC address, the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
-			msg("Start ledControl at address: " + address);
+			//msg("Start ledControl at address: " + address);
             // Make an intent to start next activity.
 			Intent i = new Intent(MainActivity.this, ledControl.class);
 			//Intent i = new Intent(DeviceList.this, MainActivity.class);
@@ -43,7 +43,7 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
 		
-		msg("Main Class Here");
+		//msg("Main Class Here");
         //Calling widgets
         btnPaired = (Button)findViewById(R.id.button);
         devicelist = (ListView)findViewById(R.id.listView);
@@ -75,25 +75,7 @@ public class MainActivity extends Activity
 			});
 		
     }
-	/*@Override
-	private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener()
-    {
-		@Override
-        public void onItemClick (AdapterView<?> av, View v, int arg2, long arg3)
-        {
-            // Get the device MAC address, the last 17 chars in the View
-            String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
-			msg("Start ledControl at address: " + address);
-            // Make an intent to start next activity.
-			Intent i = new Intent(MainActivity.this, ledControl.class);
-			//Intent i = new Intent(DeviceList.this, MainActivity.class);
-            //Change the activity.
-            i.putExtra(EXTRA_ADDRESS, address); //this will be received at ledControl (class) Activity;
-			
-            startActivity(i);
-        }
-    };*/
+	
 	private void pairedDevicesList()
     {
         pairedDevices = myBluetooth.getBondedDevices();

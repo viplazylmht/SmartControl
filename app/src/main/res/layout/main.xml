@@ -44,7 +44,7 @@
 			<TextView
 				android:layout_height="match_parent"
 				android:layout_width="wrap_content"
-				android:text="thoi gian delay"
+				android:text="Thời gian hoạt động"
 				android:gravity="center|center_vertical"/>
 
 			<EditText
@@ -57,7 +57,9 @@
 				android:textColor="#9D3029"
 				android:gravity="center|center_vertical"
 				android:id="@+id/time_delay"
-				android:maxLength="2"/>
+				android:maxLength="3"
+				android:layout_marginLeft="30dp"
+				android:layout_marginRight="80dp"/>
 
 		</LinearLayout>
 
@@ -70,20 +72,46 @@
 			<Button
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="Disconnect"
+				android:text="Ngắt kết nối"
 				android:id="@+id/btn_dis"/>
 
 			<Button
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="Send"
+				android:text="Gửi"
 				android:id="@+id/btn_send"/>
 
 			<Button
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="Refesh"
+				android:text="Làm mới"
 				android:id="@+id/btn_ref"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:orientation="horizontal">
+
+			<TextView
+				android:layout_height="match_parent"
+				android:layout_width="wrap_content"
+				android:text="Test command"
+				android:gravity="center"/>
+
+			<EditText
+				android:layout_height="match_parent"
+				android:layout_width="wrap_content"
+				android:ems="10"
+				android:id="@+id/cmd_test"
+				android:paddingLeft="10dp"/>
+
+			<Button
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:text="OK"
+				android:id="@+id/btn_test"/>
 
 		</LinearLayout>
 

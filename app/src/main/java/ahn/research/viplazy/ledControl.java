@@ -31,18 +31,19 @@ import android.os.*;
 
 public class ledControl extends Activity {
 	private static final int DELETE_WORK = Menu.FIRST;
-	private static final int ABOUT = Menu.FIRST + 2;
-	private static final int SAVE = Menu.FIRST + 4;
-	private static final int LOAD = Menu.FIRST + 6;
+	private static final int CHECK = Menu.FIRST + 2;
+	private static final int HO_TRO = Menu.FIRST + 4;
+	private static final int ABOUT = Menu.FIRST + 6;
 	
-    Button btnSend, btnRef, btnDis, button;
-    EditText workEnter, time_delay;
+    Button btnSend, btnRef, btnDis, button, btnTest;
+    EditText workEnter, time_delay,cmd_test;
 	ListView list;
 	Handler bluetoothIn;
 	private StringBuilder recDataString = new StringBuilder();
+	private StringBuilder str = new StringBuilder();
 	private ConnectedThread mConnectedThread;
 	final int handlerState = 0;   
-    TextView  btnTest,txtString;
+    TextView  txtString;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -78,6 +79,10 @@ public class ledControl extends Activity {
 		btnDis=(Button)findViewById(R.id.btn_dis);
 		btnSend=(Button)findViewById(R.id.btn_send);
 		btnRef=(Button)findViewById(R.id.btn_ref);
+		
+		btnTest=(Button)findViewById(R.id.btn_test);
+		cmd_test=(EditText)findViewById(R.id.cmd_test);
+		
 		bluetoothIn = new Handler() {
 			public void handleMessage(android.os.Message msg) {
 				if (msg.what == handlerState) {										//if message is what we want
@@ -87,8 +92,9 @@ public class ledControl extends Activity {
 					int startOfLineIndex = recDataString.indexOf("#");    
 					if (endOfLineIndex > 0) {                                           // make sure there data before ~
 						String dataInPrint = recDataString.substring(startOfLineIndex+1, endOfLineIndex);    // extract string
-						txtString.setText(dataInPrint);           		
-						//xuLyDuLieu(dataInPrint);
+						txtString.setText(dataInPrint);     
+						
+						xuLyDuLieu(dataInPrint);
 						//recDataString = new StringBuilder();
 						recDataString.delete(0, recDataString.length()); 					//clear all string data 
 						
@@ -125,14 +131,14 @@ public class ledControl extends Activity {
 			}
 		});
 		btnSend.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View p1)
 			{
-				@Override
-				public void onClick(View p1)
-				{
-					// TODO: Implement this method
-					turnOnLed();
-				}
-			});
+				
+				guiDuLieu();
+			}
+		});
 		btnRef.setOnClickListener(new View.OnClickListener()
 			{
 				@Override
@@ -142,14 +148,34 @@ public class ledControl extends Activity {
 					dongbo();
 				}
 			});
+		btnTest.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View p1)
+			{
+				sendCommand();
+			}
+		});
     }
 	/* ==     ==       ==     ==    */
+	private void sendCommand() {
+		try
+		{
+		 	String s = "#"+cmd_test.getText().toString()+"~";
+			btSocket.getOutputStream().write(s.getBytes());
+		}
+		catch (IOException e)
+		{
+			msg(" Có lỗi trong khi gửi lệnh");
+		}
+		
+	}
 	private void ThemDuLieu()
     {
-        if (workEnter.getText().toString().equals("")) {
+        if (time_delay.getText().toString().equals("")) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(ledControl.this);
 			builder.setTitle("Lỗi");
-			builder.setMessage("Chưa nhập tên lịch trình");
+			builder.setMessage("Chưa nhập thoi gian hoat dong");
 			builder.setPositiveButton("Thử lại", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
@@ -170,6 +196,7 @@ public class ledControl extends Activity {
 						String gio = selectedHour + "";
 						String phut = selectedMinute + "";
 						String workContent = workEnter.getText().toString();
+						if (workContent.equals("")) {workContent="NONAME"; }
 						//String timeContent = gio + " gio " + phut + " phut";
 						String t_delay = time_delay.getText().toString();
 						Work work = new Work(workContent, gio, phut,t_delay);
@@ -187,76 +214,47 @@ public class ledControl extends Activity {
 		}
 
     }
-	public void save(String fileName) throws FileNotFoundException {
-		FileOutputStream fout= new FileOutputStream (fileName);
-		try
-		{
-			ObjectOutputStream oos = new ObjectOutputStream(fout);
-			oos.writeObject(array);
-			fout.close();
-		}
-		catch (IOException e)
-		{ msg("Error while saving data");}
-	
-	}
-	//To read back you can have
-
-	public void read(String fileName) throws FileNotFoundException {
-		FileInputStream fin= new FileInputStream (fileName);
-		try
-		{
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			try
-			{
-				array = (ArrayList<Work>)ois.readObject();
-			}
-			catch (ClassNotFoundException e)
-			{}
-			catch (IOException e)
-			{}
-			fin.close();
-		}
-		catch (IOException e)
-		{}
-		
-	}
 	private void xuLyDuLieu(String inp) {
 		String[] recv = new String[30];
+		for (int i=0;i<30;i++) { recv[i]="";}
 		int k=0;
+		str = new StringBuilder(inp);
+		int end= str.indexOf(" ");
 		
-		StringBuilder str = new StringBuilder(inp);
-		txtString.setText("Prepare: " + str);
-		int end= inp.indexOf(" ");
 		while (end > 0) {
-			recv[k] = inp.substring(0,end);
+			recv[k] = str.substring(0,end);
 			str.delete(0,end+1);
 			k++;
+			end = str.indexOf(" ");
+			if (end ==-1) break;
 		}
+		recv[k] = str.substring(0,str.length());
 		//   =========
-		switch (recv[0]) {
-			case "clear": {
+		
+				if (recv[0].equalsIgnoreCase("xoahet")){
 				array.clear();
 				arrayAdapter.notifyDataSetChanged();
-				break;
+			
 			}
-			case "add": {
+				if (recv[0].equalsIgnoreCase("add")) {
 				Work in = new Work("NONAME", recv[1], recv[2],recv[3]);
 				array.add(0, in);
 				arrayAdapter.notifyDataSetChanged();
-				break;
+				
 			}
-			case "LOG:": {
-				String s = "";
-				for (int i=1;i<=30;i++) if (recv[i].equals("")==false) {
-					s += recv[i] + " ";
+			if (recv[0].equalsIgnoreCase("LOG:")) {
+				String s = "Dữ liệu: ";
+				for (int i=1;i<30;i++){
+					if (recv[i].length()>0) {s =s+ recv[i] + " ";}
 				}
 				txtString.setText(s);
-				break;
+				msg(s);
 			}
-			default: msg("Null Command~~");
-		}
+			if (recv[0].equalsIgnoreCase("time")) { msg("Thời gian trên hệ thống: "+recv[1]+" giờ "+recv[2]+" phút "+recv[3]+" giây!");}
+			
 	}
 
+	
     private void Disconnect()
     {
         if (btSocket!=null) //If the btSocket is busy
@@ -282,10 +280,9 @@ public class ledControl extends Activity {
 				String date = df.format(Calendar.getInstance().getTime());
 				String tg = "#sync " + date + "~";
                 btSocket.getOutputStream().write(tg.getBytes());
-				tg = "#time~";
-                btSocket.getOutputStream().write(tg.getBytes());
+				
 				btSocket.getOutputStream().write("#get~".toString().getBytes());
-				//recvGet(btSocket, array);
+				
             }
             catch (IOException e)
             {
@@ -294,24 +291,40 @@ public class ledControl extends Activity {
         }
     }
 	
-    private void turnOnLed()
+    private void guiDuLieu() 
     {
+		
         if (btSocket!=null)
         {
-            try
-            {
-                btSocket.getOutputStream().write("#clear~".getBytes());
-				for (int i=0;i<array.size();i++)
-				{
-					String tg = "#set " + array.get(i).getTimeh() + " " + array.get(i).getTimem() + " " + array.get(i).getDelay() + "~";
-					btSocket.getOutputStream().write(tg.getBytes());
-					msg("Nạp thành công!");
-				}
-            }
-            catch (IOException e)
-            {
-                msg("Lỗi");
-            }
+			AlertDialog.Builder builder1 = new AlertDialog.Builder(ledControl.this);
+			//builder1.setTitle("Dat lai thong tin");
+			builder1.setMessage("Bạn có muốn xóa hết các lịch trình đã lưu trước đó?");
+			builder1.setNegativeButton("Có", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						try
+						{
+							btSocket.getOutputStream().write("#clear~".getBytes());
+						}
+						catch (IOException e)
+						{ }
+						new SendData().execute();
+						try
+						{
+							btSocket.getOutputStream().write("#sapxep~".getBytes());
+						}
+						catch (IOException e)
+						{}
+					}
+				});
+			builder1.setPositiveButton("Không", new DialogInterface.OnClickListener() {
+			 public void onClick(DialogInterface dialog, int which) {
+			 // TODO Auto-generated method stub
+				 new SendData().execute();
+			 }
+			 });
+			builder1.show();	
+			
         }
     }
 	private void deleteCheckedWork() {
@@ -340,9 +353,9 @@ public class ledControl extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu); 
 		menu.add(0, DELETE_WORK, 0,"Xóa").setIcon(android.R.drawable.ic_delete); 
-		menu.add(0, ABOUT, 0,"Thông tin").setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, SAVE, 0,"Lưu lại").setIcon(android.R.drawable.ic_menu_save);
-		menu.add(0, LOAD, 0,"Load lại từ hệ thống").setIcon(android.R.drawable.ic_menu_save);
+		menu.add(0, CHECK, 0,"Trang thai he thong").setIcon(android.R.drawable.ic_menu_info_details);
+		menu.add(0, HO_TRO, 0,"Tro giup").setIcon(android.R.drawable.ic_menu_save);
+		menu.add(0, ABOUT, 0,"Thong tin ung dung").setIcon(android.R.drawable.ic_menu_save);
 		return true;
 	} 
 	//Xử lý sự kiện khi các option trong Option Menu được lựa chọn
@@ -356,7 +369,7 @@ public class ledControl extends Activity {
 			case ABOUT: {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 					builder.setTitle("THPT ANH HÙNG NÚP");
-					builder.setMessage("AUTHOR: Duy Master" + "/n" + "Dự án hệ thống đóng ngắt tự động cho trường học /n" + "Facebook:/n" + "@viplazylmht/n" + "@paomat\n");
+					builder.setMessage("AUTHOR: Duy Master" + "\n" + "Dự án hệ thống đóng ngắt tự động cho trường học \n" + "Facebook:\n" + "@viplazylmht\n" + "@paomat\n");
 					builder.setPositiveButton("Đóng", new DialogInterface.OnClickListener() { 
 							public void onClick(DialogInterface dialog, int which) {
 							}
@@ -365,22 +378,17 @@ public class ledControl extends Activity {
 					builder.show();
 					break;
 				}
-			case SAVE: {
+			case CHECK: {
 					try
 					{
-						save("/storage/emulated/0/AppProjects/Duy.txt");
+						btSocket.getOutputStream().write("#check~".getBytes());
 					}
-					catch (FileNotFoundException e)
-					{ msg("Error while saving!");}
+					catch (IOException e)
+					{msg("Co loi khi kiem tra trang thai");}
 					break;
 				} 
-			case LOAD: {
-					try
-					{
-						read("/storage/emulated/0/AppProjects/Duy.txt");
-					}
-					catch (FileNotFoundException e)
-					{msg("Error while loading!");}
+			case HO_TRO: {
+					
 					break;
 				} 
 		}
@@ -404,11 +412,11 @@ public class ledControl extends Activity {
             {
                 if (btSocket == null || !isBtConnected)
                 {
-                 myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
+                 myBluetooth = BluetoothAdapter.getDefaultAdapter();
                  BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
                  btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
                  BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                 btSocket.connect();//start connection
+                 btSocket.connect();//Bất đầu kết nối
                 }
             }
             catch (IOException e)
@@ -425,7 +433,7 @@ public class ledControl extends Activity {
             if (!ConnectSuccess)
             {
                 msg("Kết nối thất bại, vui lòng thử lại!");
-                finish();
+               // finish();
             }
             else
             {
@@ -433,21 +441,90 @@ public class ledControl extends Activity {
                 isBtConnected = true;
 				mConnectedThread = new ConnectedThread(btSocket);
 				mConnectedThread.start();
+				dongbo();
             }
             progress.dismiss();
         }
     }
+	private class SendData extends AsyncTask<Void, Void, Void>
+	{
+		private boolean isSent = false;
+		@Override
+        protected void onPreExecute()
+        {
+            progress = ProgressDialog.show(ledControl.this, "Đang gui du lieu...", "Vui lòng chờ !!!");  //show a progress dialog
+			
+        }
+		@Override
+		protected Void doInBackground(Void[] p1)
+		{
+			// TODO: Implement this method
+			try
+			{
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException e)
+			{}
+			for (Work num: array)
+			{
+				String tg = "#set " + num.getTimeh() + " " + num.getTimem() + " " + num.getDelay() + "~";
+				try
+				{
+
+					btSocket.getOutputStream().write(tg.getBytes());
+					//msg("Gui :" + dem + " | " + num.getTimeh() + " | "+ num.getTimem()+ " | "+num.getDelay());
+					try
+					{
+						Thread.sleep(150);
+					}
+					catch (InterruptedException e)
+					{}
+					isSent=true;
+				}
+				catch (IOException e)
+				{
+					msg("Có lỗi khi gửi dữ liệu: " +num);
+					isSent=false;
+				}
+			}
+			try
+			{
+				btSocket.getOutputStream().write("#sapxep~".getBytes());
+			}
+			catch (IOException e)
+			{}
+			
+			return null;
+		}
+		
+		@Override
+        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
+        {
+            super.onPostExecute(result);
+
+            if (!isSent)
+            {
+                msg("Co loi khi gui du lieu!");
+				// finish();
+            }
+            else
+            {
+                msg("Đã gui du lieu.");
+            }
+            progress.dismiss();
+        }
+	}
 	private class ConnectedThread extends Thread {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        //creation of the connect thread
+        //Mục đích: đọc dữ liệu đc gửi từ hệ thống
         public ConnectedThread(BluetoothSocket socket) {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
             try {
-            	//Create I/O streams for connection
+            	//Tạo I/O streams cho kết nối
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) { }
@@ -461,29 +538,17 @@ public class ledControl extends Activity {
             byte[] buffer = new byte[256];  
             int bytes; 
 
-            // Keep looping to listen for received messages
+            // Vòng lặp vô hạn để nhận tín hiệu truyền tới
             while (true) {
                 try {
-                    bytes = mmInStream.read(buffer);        	//read bytes from input buffer
+                    bytes = mmInStream.read(buffer);        	// Đọc bytes tới từ buffer
                     String readMessage = new String(buffer, 0, bytes);
-                    // Send the obtained bytes to the UI Activity via handler
+                    // Gửi những byte thu được tới giao diện hoạt động thông qua handler
                     bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget(); 
                 } catch (IOException e) {
                     break;
                 }
             }
         }
-        //write method
-        public void write(String input) {
-            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
-            try {
-                mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
-            } catch (IOException e) {  
-            	//if you cannot write, close the application
-            	Toast.makeText(getBaseContext(), "Lỗi khi đọc ghi dữ liệu", Toast.LENGTH_LONG).show();
-            	finish();
-
-			}
-		}
 	}
 }
