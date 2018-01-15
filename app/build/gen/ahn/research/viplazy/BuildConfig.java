@@ -2,5 +2,5 @@
 package ahn.research.viplazy;
 
 public final class BuildConfig {
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
 }

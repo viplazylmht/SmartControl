@@ -1,7 +1,7 @@
 # THPT ANH HUNG NUP
-D? án thi?t b? ?óng ng?t nóng ng?t thi?t b? ?óng ng?t ?i?n t? ??ng trong tr??ng h?c, v?n phòng, n?i công c?ng b?ng vi m?ch ?i?u khi?n Arduino Nano
+# Arduino Nano
 
-# ???ng d?n t?i ?ng d?ng
-	
-# H??ng d?n s? d?ng ?ng d?ng (powerpoint)
-	
+# How to download app
+	-go to /Output_built and install "app.apk" application in here
+# How to use (powerpoint)
+ Â   -go to /Output_built and download "How_to_use(VIE).ppt" to view.
