@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "ahn.research.viplazy"
         minSdkVersion 14
-        targetSdkVersion 21
-        versionCode 1
-        versionName "1.r2"
+        targetSdkVersion 27
+        versionCode 1601
+        versionName "2.r8"
     }
     buildTypes {
         release {

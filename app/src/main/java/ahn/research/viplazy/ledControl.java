@@ -27,6 +27,8 @@ import java.util.regex.*;
 import java.text.*;
 import java.util.concurrent.*;
 import android.os.*;
+import android.net.*;
+import android.util.*;
 
 
 public class ledControl extends Activity {
@@ -35,15 +37,15 @@ public class ledControl extends Activity {
 	private static final int HO_TRO = Menu.FIRST + 4;
 	private static final int ABOUT = Menu.FIRST + 6;
 	
-    Button btnSend, btnRef, btnDis, button, btnTest;
-    EditText workEnter, time_delay,cmd_test;
+    Button btnSend, btnRef, btnDis, button;
+    EditText workEnter, time_delay;
 	ListView list;
 	Handler bluetoothIn;
 	private StringBuilder recDataString = new StringBuilder();
 	private StringBuilder str = new StringBuilder();
 	private ConnectedThread mConnectedThread;
 	final int handlerState = 0;   
-    TextView  txtString;
+  //  TextView  txtString;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -74,14 +76,15 @@ public class ledControl extends Activity {
 		
 		workEnter =(EditText)findViewById(R.id.work_enter);
 		time_delay=(EditText)findViewById(R.id.time_delay);
-		txtString=(TextView)findViewById(R.id.view_stt);
+		//txtString=(TextView)findViewById(R.id.view_stt);
 		button=(Button)findViewById(R.id.button);
 		btnDis=(Button)findViewById(R.id.btn_dis);
 		btnSend=(Button)findViewById(R.id.btn_send);
 		btnRef=(Button)findViewById(R.id.btn_ref);
 		
-		btnTest=(Button)findViewById(R.id.btn_test);
-		cmd_test=(EditText)findViewById(R.id.cmd_test);
+		//btnTest=(Button)findViewById(R.id.btn_test);
+		//btnTest.setText("Sap Xep");
+		//cmd_test=(EditText)findViewById(R.id.cmd_test);
 		
 		bluetoothIn = new Handler() {
 			public void handleMessage(android.os.Message msg) {
@@ -92,7 +95,7 @@ public class ledControl extends Activity {
 					int startOfLineIndex = recDataString.indexOf("#");    
 					if (endOfLineIndex > 0) {                                           // make sure there data before ~
 						String dataInPrint = recDataString.substring(startOfLineIndex+1, endOfLineIndex);    // extract string
-						txtString.setText(dataInPrint);     
+						//txtString.setText(dataInPrint);     
 						
 						xuLyDuLieu(dataInPrint);
 						//recDataString = new StringBuilder();
@@ -148,34 +151,22 @@ public class ledControl extends Activity {
 					dongbo();
 				}
 			});
-		btnTest.setOnClickListener(new View.OnClickListener()
+	/*	btnTest.setOnClickListener(new View.OnClickListener()
 		{
 			@Override
 			public void onClick(View p1)
 			{
-				sendCommand();
+				sapxep();
 			}
-		});
+		});*/
     }
 	/* ==     ==       ==     ==    */
-	private void sendCommand() {
-		try
-		{
-		 	String s = "#"+cmd_test.getText().toString()+"~";
-			btSocket.getOutputStream().write(s.getBytes());
-		}
-		catch (IOException e)
-		{
-			msg(" Có lỗi trong khi gửi lệnh");
-		}
-		
-	}
 	private void ThemDuLieu()
     {
         if (time_delay.getText().toString().equals("")) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(ledControl.this);
 			builder.setTitle("Lỗi");
-			builder.setMessage("Chưa nhập thoi gian hoat dong");
+			builder.setMessage("Chưa nhập thời gian hoạt động");
 			builder.setPositiveButton("Thử lại", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
@@ -201,7 +192,8 @@ public class ledControl extends Activity {
 						String t_delay = time_delay.getText().toString();
 						Work work = new Work(workContent, gio, phut,t_delay);
 						array.add(0, work);
-						arrayAdapter.notifyDataSetChanged();
+						sapxep();
+						//arrayAdapter.notifyDataSetChanged();
 						workEnter.setText("");
 						time_delay.setText("");
 						//hourEdit.setText("");
@@ -239,15 +231,15 @@ public class ledControl extends Activity {
 				if (recv[0].equalsIgnoreCase("add")) {
 				Work in = new Work("NONAME", recv[1], recv[2],recv[3]);
 				array.add(0, in);
-				arrayAdapter.notifyDataSetChanged();
+				sapxep();
 				
 			}
 			if (recv[0].equalsIgnoreCase("LOG:")) {
-				String s = "Dữ liệu: ";
+				String s = "";
 				for (int i=1;i<30;i++){
 					if (recv[i].length()>0) {s =s+ recv[i] + " ";}
 				}
-				txtString.setText(s);
+				//txtString.setText(s);
 				msg(s);
 			}
 			if (recv[0].equalsIgnoreCase("time")) { msg("Thời gian trên hệ thống: "+recv[1]+" giờ "+recv[2]+" phút "+recv[3]+" giây!");}
@@ -293,7 +285,7 @@ public class ledControl extends Activity {
 	
     private void guiDuLieu() 
     {
-		
+		if (array.size() ==0) { msg("Chưa nhập dữ liệu để gửi");return;}
         if (btSocket!=null)
         {
 			AlertDialog.Builder builder1 = new AlertDialog.Builder(ledControl.this);
@@ -327,6 +319,26 @@ public class ledControl extends Activity {
 			
         }
     }
+	
+	private void sapxep() {
+
+		Work tg = null;
+
+		for (int i = 0; i < array.size(); i++)
+
+			for (int j=i+1; j <array.size(); j++)
+			{
+				int num1 = Integer.valueOf(array.get(i).getTimeh().toString())*60+Integer.valueOf(array.get(i).getTimem().toString());
+				int num2 = Integer.valueOf(array.get(j).getTimeh().toString())*60+Integer.valueOf(array.get(j).getTimem().toString());
+				if (num1 > num2) {
+					tg= array.get(i);
+					array.set(i, array.get(j));
+					array.set(j, tg);
+				}
+			}
+		arrayAdapter.notifyDataSetChanged();
+
+	}
 	private void deleteCheckedWork() {
 		if (array.size() > 0) {
 			int i=0;
@@ -353,9 +365,9 @@ public class ledControl extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu); 
 		menu.add(0, DELETE_WORK, 0,"Xóa").setIcon(android.R.drawable.ic_delete); 
-		menu.add(0, CHECK, 0,"Trang thai he thong").setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, HO_TRO, 0,"Tro giup").setIcon(android.R.drawable.ic_menu_save);
-		menu.add(0, ABOUT, 0,"Thong tin ung dung").setIcon(android.R.drawable.ic_menu_save);
+		menu.add(0, CHECK, 0,"Trạng thái hệ thống").setIcon(android.R.drawable.ic_menu_info_details);
+		menu.add(0, HO_TRO, 0,"Trợ giúp").setIcon(android.R.drawable.ic_menu_save);
+		menu.add(0, ABOUT, 0,"Thông tin ứng dụng").setIcon(android.R.drawable.ic_menu_save);
 		return true;
 	} 
 	//Xử lý sự kiện khi các option trong Option Menu được lựa chọn
@@ -368,7 +380,7 @@ public class ledControl extends Activity {
 				} 
 			case ABOUT: {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
-					builder.setTitle("THPT ANH HÙNG NÚP");
+					builder.setTitle("Trường THPT ANH HÙNG NÚP");
 					builder.setMessage("AUTHOR: Duy Master" + "\n" + "Dự án hệ thống đóng ngắt tự động cho trường học \n" + "Facebook:\n" + "@viplazylmht\n" + "@paomat\n");
 					builder.setPositiveButton("Đóng", new DialogInterface.OnClickListener() { 
 							public void onClick(DialogInterface dialog, int which) {
@@ -384,11 +396,12 @@ public class ledControl extends Activity {
 						btSocket.getOutputStream().write("#check~".getBytes());
 					}
 					catch (IOException e)
-					{msg("Co loi khi kiem tra trang thai");}
+					{msg("Có lỗi khi kiểm tra trạng thái");}
 					break;
 				} 
 			case HO_TRO: {
-					
+					Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.facebook.com/viplazylmht"));
+					startActivity(i);
 					break;
 				} 
 		}
@@ -433,7 +446,7 @@ public class ledControl extends Activity {
             if (!ConnectSuccess)
             {
                 msg("Kết nối thất bại, vui lòng thử lại!");
-               // finish();
+                finish();
             }
             else
             {
@@ -452,7 +465,7 @@ public class ledControl extends Activity {
 		@Override
         protected void onPreExecute()
         {
-            progress = ProgressDialog.show(ledControl.this, "Đang gui du lieu...", "Vui lòng chờ !!!");  //show a progress dialog
+            progress = ProgressDialog.show(ledControl.this, "Đang gửi dữ liệu...", "Vui lòng chờ !!!");  //show a progress dialog
 			
         }
 		@Override
@@ -504,12 +517,12 @@ public class ledControl extends Activity {
 
             if (!isSent)
             {
-                msg("Co loi khi gui du lieu!");
+                msg("Có lỗi khi gửi dữ liệu!");
 				// finish();
             }
             else
             {
-                msg("Đã gui du lieu.");
+                msg("Gửi dữ liệu hoàn tất!");
             }
             progress.dismiss();
         }
