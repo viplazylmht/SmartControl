@@ -381,7 +381,7 @@ public class ledControl extends Activity {
 			case ABOUT: {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 					builder.setTitle("Trường THPT ANH HÙNG NÚP");
-					builder.setMessage("AUTHOR: Duy Master" + "\n" + "Dự án hệ thống đóng ngắt tự động cho trường học \n" + "Facebook:\n" + "@viplazylmht\n" + "@paomat\n");
+					builder.setMessage("AUTHOR: Duy Master" + "\n" + "Dự án hệ thống đóng ngắt tự động cho trường học \n" + "Facebook:\n" + "@viplazylmht\n" + "@dindragonz\n");
 					builder.setPositiveButton("Đóng", new DialogInterface.OnClickListener() { 
 							public void onClick(DialogInterface dialog, int which) {
 							}
